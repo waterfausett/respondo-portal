@@ -6,14 +6,11 @@ const passport = require('passport');
 router.get('/auth', passport.authenticate('oauth2', {
     scope: ['identify', 'email', ' guilds'], // Used to specify the required data
     prompt: 'none',
-    session: true,
-    successReturnToOrRedirect: '/login'
+    session: true
 }));
 
 // The middleware receives the data from Google and runs the function on Strategy config
-router.get('/auth/callback', passport.authenticate('oauth2'), (req, res) => {
-    res.redirect('/');
-});
+router.get('/auth/callback', passport.authenticate('oauth2', { successReturnToOrRedirect: '/', failureRedirect: '/login' }));
 
 // Login route
 router.get('/login', (req, res) => {
