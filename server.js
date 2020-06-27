@@ -40,6 +40,7 @@ app.use(require('./app/controllers'));
 // Api routes
 app.use('/api/v1', require('./app/controllers/api'));
 
+// Error handling
 app.use(require('./config/error'));
 
 app.listen(app.get('port'), function() {
