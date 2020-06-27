@@ -15,6 +15,8 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
+                        <img src="<%- user.avatar_url %>" class="img img-fluid rounded-circle" width="35" alt="default discord icon"
+                            onerror="this.src='https://cdn.discordapp.com/embed/avatars/1.png';">
                         <%- user.username %>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">

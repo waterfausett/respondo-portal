@@ -25,7 +25,7 @@ passport.use(new OAuth2Strategy({
           return response;
       })
       .then(res => res.json())
-      .then(user => done(null, Object.assign(user, {accessToken, refreshToken})))
+      .then(user => done(null, Object.assign(user, {accessToken, refreshToken, avatar_url: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`})))
       .catch(err => done(err, false));
   }
 ));
