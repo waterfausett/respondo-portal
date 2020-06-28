@@ -181,7 +181,7 @@
                     return sortValue * (asc ? 1 : -1);
                 });
 
-                const _searchFilter = self.searchFilter();
+                const _searchFilter = (self.searchFilter() || '').toLowerCase();
                 return _searchFilter
                     ? _sorted.filter((item) => item.trigger.includes(_searchFilter) || item.response.includes(_searchFilter))
                     : _sorted;
