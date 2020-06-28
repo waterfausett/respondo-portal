@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-const triggerService = require('../services/trigger.service');
-
 /* GET home page. */
 router.get('/', async (req, res, next) => {
 	res.render('index', { 
