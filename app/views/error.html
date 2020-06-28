@@ -1,0 +1,23 @@
+<div class="container-fluid">
+    <div class="jumbotron text-center">
+        <h2>
+            Welp, that didn't work&hellip; :(
+        </h2>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h4>Error message:</h4>
+                <p><%- error.message %></p>
+            </div>
+        </div>
+    </div>
+
+    <% if (error.details) { %>
+        <div class="jumbotron pt-3">
+            <h5>Error details:</h5>
+            <code><pre><%- error.details %></pre></code>
+        </div>
+    <% } %>
+</div>

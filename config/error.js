@@ -1,26 +1,43 @@
-const isProduction = process.env.NODE_ENV === 'production';
+function censor(censor) {
+    var i = 0;
+  
+    return function(key, value) {
+      if(i !== 0 && typeof(censor) === 'object' && typeof(value) == 'object' && censor == value) 
+        return '[Circular]'; 
+  
+      if(i >= 29) // seems to be a harded maximum of 30 serialized objects?
+        return '[Unknown]';
+  
+      ++i; // so we know we aren't using the original object anymore
+  
+      return value;  
+    }
+}
 
-// TODO: prolly should create an error page and feed it this data instead
-const debugErrorHandler = (err, req, res, next) => {
+module.exports = (err, req, res, next) => {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const isApiRequest = req.path.startsWith('/api');
+
     res.status(err.status || 500);
 
-    res.json({
-        errors: {
-            message: err.message,
-            error: err,
-        },
-    });
+    if (isApiRequest) {
+        res.json({
+            errors: {
+                message: err.message,
+                error: err,
+            },
+        });
+    }
+    else {
+        res.render('error', { 
+            layout: 'shared/layout', 
+            title: global.title, 
+            activeTabClass: '.nav-link.home',
+            user: req.user,
+            error: {
+                message: err.message,
+                details: !isProduction ? JSON.stringify(err, censor(err), 2) : null
+            }
+        });
+    }
 };
-
-const productionErrorHandler = (err, req, res, next) => {
-    res.status(err.status || 500);
-
-    res.json({
-        errors: {
-            message: err.message,
-            error: {},
-        },
-    });
-};
-
-module.exports = isProduction ? productionErrorHandler : debugErrorHandler;

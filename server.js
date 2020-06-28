@@ -45,14 +45,13 @@ app.use(require('./config/error'));
 
 // 404 route
 app.use((req, res, next) => {
-    res.status(404)//.send("Sorry can't find that!")
+    res.status(404)
     .render('404', { 
         layout: 'shared/layout', 
         title: global.title, 
         activeTabClass: '.nav-link.home',
         user: req.user
     });
-
 });
 
 app.listen(app.get('port'), function() {
