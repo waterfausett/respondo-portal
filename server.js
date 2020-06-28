@@ -44,9 +44,15 @@ app.use('/api/v1', require('./app/controllers/api'));
 app.use(require('./config/error'));
 
 // 404 route
-// TODO: consider making this better
 app.use((req, res, next) => {
-    res.status(404).send("Sorry can't find that!")
+    res.status(404)//.send("Sorry can't find that!")
+    .render('404', { 
+        layout: 'shared/layout', 
+        title: global.title, 
+        activeTabClass: '.nav-link.home',
+        user: req.user
+    });
+
 });
 
 app.listen(app.get('port'), function() {
