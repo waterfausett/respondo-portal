@@ -124,7 +124,7 @@
                 })
                 .catch(showError)
                 .then(_ => self.fetchingGuilds(false))
-                .then(_ => self.guildsCaption(null));
+                .then(_ => self.guildsCaption(self.guilds().length === 0 ? 'None' : null));
             }
                 
             self.guilds = ko.observableArray();
