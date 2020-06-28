@@ -18,14 +18,15 @@ router.get('/', async (req, res, next) => {
 /* POST a trigger */
 router.post('/', async (req, res, next) => {
     const addObj = req.body;
-    const { isAllowed, id } = await triggerService.addResponse(addObj.guildId, addObj.trigger, addObj.response);
-    if (isAllowed) {
-        const newObj = Object.assign({id}, addObj);
+    try {
+        const id = await triggerService.addResponse(addObj.guildId, addObj.trigger, addObj.response);
+        const newObj = Object.assign(addObj, {id});
         res.status(201).json(newObj);
-        }
-    else {
-        res.statusMessage = 'Trigger/Response combo already exists!';
-        res.status(409).end();
+    } catch (error) {
+        if (error && error.constraint === 'UX_Trigger_Response_GuildId') {
+            res.statusMessage = 'Trigger/Response combo already exists!';
+            res.status(409).end();
+        } else throw error;
     }
 });
 
