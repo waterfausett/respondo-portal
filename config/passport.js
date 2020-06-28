@@ -6,11 +6,11 @@ const OAuth2Strategy = require('passport-oauth2');
 
 // Strategy config
 passport.use(new OAuth2Strategy({
-    authorizationURL: authConfig.authorization_url,
-    tokenURL: authConfig.token_url,
-    clientID: authConfig.client_id,
-    clientSecret: authConfig.client_secret,
-    callbackURL: "http://localhost:5000/auth/callback",
+    authorizationURL: process.env.authorization_url || authConfig.authorization_url,
+    tokenURL: process.env.token_url || authConfig.token_url,
+    clientID: process.env.client_id || authConfig.client_id,
+    clientSecret: process.env.client_secret || authConfig.client_secret,
+    callbackURL: process.env.callback_url || authConfig.callback_url,
     scope: 'identify email guilds'
   },
   (accessToken, refreshToken, profile, done) => {
