@@ -42,7 +42,7 @@
                     <th class="w-75 sort-toggle no-select" data-bind="click: (data, event) => { toggleSort('response', event) }">
                         <span class="pull-left">Response</span> <i class="fa pull-right"></i>
                     </th>
-                    <th class="text-center" style="min-width: 130px;"><button type="button" class="btn btn-default" disabled data-bind="click: addTrigger, enable: guildId() && !fetchingTriggers()"><i class="fa fa-plus"></i></button></th>
+                    <th class="text-center" style="min-width: 175px;"><button type="button" class="btn btn-default" disabled data-bind="click: addTrigger, enable: guildId() && !fetchingTriggers()"><i class="fa fa-plus"></i></button></th>
                 </tr>
             </thead>
             <tr class="text-center invis" data-bind="css: { invis: !fetchingTriggers() }">
@@ -60,6 +60,9 @@
                         <input type="text" class="form-control inline-edit text-truncate" data-bind="value: response" name="response"/>
                     </td>
                     <td class="flex-center">
+                        <button type="type" value="preview" class="btn btn-default border mr-3" title="Preview"
+                            data-bind="click: $parent.previewTrigger"><i class="fa fa-info"></i></button>
+
                         <button type="type" value="save" class="btn btn-success mr-3" title="Save" disabled
                             data-bind="click: $parent.updateTrigger"
                             data-loading-text='<i class="fa fa-cog fa-spin"></i>''><i class="fa fa-save"></i></button>
@@ -266,6 +269,21 @@
                         return applyUXEffects(item, $btn, action)
                             .then(_ => self.triggers.remove(x => x.id === item.id));
                     }
+                });
+            }
+
+            self.previewTrigger = (item, event) => {
+                const isImage = item.response.startsWith('http');
+                const html = isImage
+                ? `<div>
+                        <img src="${item.response}" class="img-fluid rounded"/>
+                   </div>`
+                : item.response
+
+                Swal.fire({
+                    title: item.trigger,
+                    html: html,
+                    showConfirmButton: true
                 });
             }
         }
