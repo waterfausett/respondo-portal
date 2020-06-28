@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 
 const triggerService = require('../../services/trigger.service');
-const { runInThisContext } = require('vm');
 
 /* GET triggers */
 router.get('/', async (req, res, next) => {
