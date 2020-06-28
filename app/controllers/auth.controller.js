@@ -15,9 +15,8 @@ router.get('/auth/callback', passport.authenticate('oauth2', { successReturnToOr
 // Login route
 router.get('/login', (req, res) => {
 	res.render('login', { 
-        layout: 'shared/layout', 
+        layout: null, 
         title: global.title, 
-        activeTabClass: '.nav-link.home',
         user: req.user
     });
 });

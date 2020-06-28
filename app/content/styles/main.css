@@ -203,3 +203,7 @@ input.inline-edit:not(.focus) {
 .bd-callout-danger h4 {
     color: #d9534f;
 }
+
+.swal-logout-bg {
+    background-color: #ffffff;
+}
