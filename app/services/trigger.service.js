@@ -23,7 +23,11 @@ async function executeQuery(query) {
 module.exports = {
     getRows: async (guildId) => {
         try {
-            const result = await executeQuery(`SELECT id, trigger, response FROM "TriggerResponses" WHERE "guildId" = '${guildId}' ORDER BY trigger`);
+            const result = await executeQuery({
+                name: 'triggers-getall',
+                text: `SELECT id, trigger, response FROM "TriggerResponses" WHERE "guildId" = $1 ORDER BY trigger`, 
+                values: [guildId]
+            });
             return result ? result.rows : [];
         } catch (err) {
             logger.error(`${TAG}::getRows:`, err);
@@ -33,7 +37,11 @@ module.exports = {
 
     addResponse: async (guildId, trigger, response) => {
         try {
-            const insertResult = await executeQuery(`INSERT INTO "TriggerResponses" (trigger, response, "guildId") VALUES ('${sqlClean(trigger)}', '${sqlClean(response)}', '${guildId}') RETURNING id`);
+            const insertResult = await executeQuery({
+                name: 'triggers-add-response',
+                text: `INSERT INTO "TriggerResponses" (trigger, response, "guildId") VALUES ($1, $2, $3) RETURNING id`,
+                values: [sqlClean(trigger), sqlClean(response), guildId]
+            });
             return insertResult.rows[0].id;
         } catch (err) {
             if (err && err.constraint === 'UX_Trigger_Response_GuildId') {
@@ -48,7 +56,11 @@ module.exports = {
 
     update: async (id, obj) => {
         try {
-            await executeQuery(`UPDATE "TriggerResponses" SET trigger = '${sqlClean(obj.trigger)}', response = '${sqlClean(obj.response)}' WHERE id = ${id}`);
+            await executeQuery({
+                name: 'triggers-update',
+                text: `UPDATE "TriggerResponses" SET trigger = $1, response = $2 WHERE id = $3`,
+                values: [sqlClean(obj.trigger), sqlClean(obj.response), id]
+            });
         } catch (err) {
             logger.error(`${TAG}::updateTrigger:`, err);
             throw err;
@@ -57,7 +69,11 @@ module.exports = {
 
     remove: async (id) => {
         try {
-            await executeQuery(`DELETE FROM "TriggerResponses" WHERE id = ${id}`);
+            await executeQuery({
+                name: 'triggers-deleteById',
+                text: `DELETE FROM "TriggerResponses" WHERE id = $1`,
+                values: [id]
+        });
         } catch (err) {
             logger.error(`${TAG}::remove:`, err);
             throw err;
