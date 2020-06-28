@@ -74,7 +74,7 @@
                         <button type="type" value="preview" class="btn btn-default border mr-3" title="Preview"
                             data-bind="click: $parent.previewTrigger"><i class="fa fa-info"></i></button>
 
-                        <button type="type" value="save" class="btn btn-success mr-3" title="Save" disabled
+                        <button type="type" value="save" class="btn btn-success mr-2" title="Save" disabled
                             data-bind="click: $parent.updateTrigger"
                             data-loading-text='<i class="fa fa-cog fa-spin"></i>''><i class="fa fa-save"></i></button>
 
@@ -210,9 +210,10 @@
                             When there are multiple <code>responses</code> configured for a given <code>trigger</code>, <b>respondo</b> will randomly pick one to reply with.
                         </div>`,
                     focusConfirm: false,
-                    confirmButtonText: 'Save',
+                    confirmButtonText: '<i class="fa fa-save"></i>&nbsp;Save',
                     confirmButtonColor: '#28a745',
                     showCancelButton: true,
+                    cancelButtonText: 'Nevermind&hellip;',
                     showLoaderOnConfirm: true,
                     customClass: {
                         actions: 'justify-content-end'
@@ -267,7 +268,7 @@
                     confirmButtonText: '🔥 Burn it with fire!',
                     confirmButtonColor: '#dc3545',
                     showCancelButton: true,
-                    cancelButtonText: 'Wait&hellip;',
+                    cancelButtonText: 'No, wait&hellip;',
                     showLoaderOnConfirm: true,
                     customClass: {
                         actions: 'justify-content-end'
