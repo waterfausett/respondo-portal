@@ -104,7 +104,13 @@
                 })
                 .then(res => res.json())
                 .then(guilds => guilds.map((guild) => Object.assign(guild, {icon_url: `https://cdn.discordapp.com/${guild.id}/${guild.icon}`})))
-                .then(guilds => self.guilds(guilds))
+                .then(guilds => {
+                    self.guilds(guilds);
+                    if (guilds.length === 1) {
+                        self.guild(guilds[0]);
+                        self.fetchTriggers();
+                    }
+                })
                 .catch(console.log); // TODO: show better msg
                 
             self.guilds = ko.observableArray();
@@ -118,7 +124,6 @@
                 if (!guildId) return;
 
                 triggerApi.getAll(self.guild().id)
-                .then(data => { console.log('fetching: ', self.guild().id); console.log(data); return data; })
                 .then(triggers => self.triggers(triggers))
                 .catch(console.log); // TODO: make better :)
             }
