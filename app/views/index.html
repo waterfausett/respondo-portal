@@ -24,12 +24,23 @@
 
     <div class="input-group mb-3">
         <div class="input-group-prepend">
-            <label class="input-group-text" for="selGuild1">Selected Guild:</label>
+            <label class="input-group-text" for="selGuild">Selected Guild:</label>
         </div>
         <select class="form-control" id="selGuild"
             data-bind="options: guilds, optionsText: 'name', value: guild, event: { change: fetchTriggers }, optionsCaption: guildsCaption()">
             <option value="{}">Loading guilds&hellip;</option>
         </select>
+    </div>
+
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-search"></i></span>
+        </div>
+        <input id="txtSearch" type="text" class="form-control" placeholder="Filter results&hellip;" data-bind="value: searchFilter, css: { dirty: searchFilter() }">
+        <span class="btn bg-transparent" style="margin-left: -40px; z-index: 100; opacity: 0.4;" title="clear"
+        data-bind="click: () => searchFilter('')">
+          <i class="fa fa-times"></i>
+        </span>
     </div>
 
     <div class="table-responsive">
@@ -101,6 +112,8 @@
         {
             const self = this;
 
+            self.searchFilter = ko.observable();
+
             self.fetchingGuilds = ko.observable(true);
             self.fetchGuilds = () => {
                 self.fetchingGuilds(true);
@@ -169,13 +182,18 @@
             self.sortedTriggers = ko.pureComputed(() => {
                 const sortColumn = self.sortColumn();
                 const asc = self.sortAsc();
-                return self.triggers.sorted((left, right) => {
+                const _sorted = self.triggers.sorted((left, right) => {
                     const sortValue = left[sortColumn] === right[sortColumn] ? left.id > right.id ? 1 : -1
                         : left[sortColumn] < right[sortColumn] ? -1
                         : 1;
 
                     return sortValue * (asc ? 1 : -1);
                 });
+
+                const _searchFilter = self.searchFilter();
+                return _searchFilter
+                    ? _sorted.filter((item) => item.trigger.includes(_searchFilter) || item.response.includes(_searchFilter))
+                    : _sorted;
             });
 
             self.addTrigger = async () => {
