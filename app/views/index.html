@@ -263,7 +263,7 @@
                     preConfirm: () => {
                         const action = triggerApi.delete(item);
 
-                        return applyUXEffects(item, $btn, Promise.resolve(action))
+                        return applyUXEffects(item, $btn, action)
                             .then(_ => self.triggers.remove(x => x.id === item.id));
                     }
                 });
