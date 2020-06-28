@@ -43,6 +43,12 @@ app.use('/api/v1', require('./app/controllers/api'));
 // Error handling
 app.use(require('./config/error'));
 
+// 404 route
+// TODO: consider making this better
+app.use((req, res, next) => {
+    res.status(404).send("Sorry can't find that!")
+});
+
 app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });

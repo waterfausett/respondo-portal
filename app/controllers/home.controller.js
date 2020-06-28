@@ -15,9 +15,4 @@ router.get('/', async (req, res, next) => {
     });
 });
 
-router.get('/*', (req, res) => {
-    // TODO: create a 404 page and serve here
-    throw new Error('not found');
-});
-
 module.exports = router;
