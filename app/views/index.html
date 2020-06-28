@@ -120,19 +120,6 @@
                 self.fetchingGuilds(true);
                 self.guilds([]);
                 self.guildsCaption('Loading guilds...');
-                /*
-                fetch('https://discord.com/api/users/@me/guilds',{
-                    headers: {
-                    'Authorization': 'Bearer <%- user.accessToken %>'
-                    }
-                }).then((response) => {
-                    if (!response.ok) {
-                        throw Error(response.statusText);
-                    }
-                    return response;
-                })
-                .then(res => res.json())
-                */
                 discordApi.getGuilds()
                 .then(guilds => guilds.map((guild) => Object.assign(guild, {icon_url: `https://cdn.discordapp.com/${guild.id}/${guild.icon}`})))
                 .then(guilds => {
