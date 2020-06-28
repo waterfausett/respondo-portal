@@ -6,6 +6,12 @@ const triggerService = require('../../services/trigger.service');
 /* GET triggers */
 router.get('/', async (req, res, next) => {
     const guildId = req.query.guildId;
+    if (!guildId) {
+        res.statusMessage = 'Bad Request: Query parameter "guildId" is required.';
+        res.statusMessage(400).end();
+        next();
+    }
+
 	res.json(guildId ? await triggerService.getRows(guildId) : []);
 });
 

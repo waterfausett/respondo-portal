@@ -9,6 +9,18 @@ const triggerApi = (() => {
     }
 
     return {
+        getAll: (guildId) => {
+            if (!guildId) return Promise.resolve([]);
+            return fetch(`${apiUrl}?guildId=${guildId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(mapResponse)
+            .then(res => res.json());
+        },
+
         add: (item) => {
             return fetch(apiUrl, {
                 method: 'POST',
