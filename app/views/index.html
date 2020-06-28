@@ -22,11 +22,13 @@
         Use the grid below to configure <b>respondo</b> behaves.
     </div>
 
-    <div class="form-group">
-        <label for="selGuild">Guild (select one):</label>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text" for="selGuild1">Selected Guild:</label>
+        </div>
         <select class="form-control" id="selGuild"
-            data-bind="options: guilds, optionsText: 'name', value: guild, optionsCaption: 'Select your guild', event: { change: fetchTriggers }">
-            <option value="{}">Select your guild</option>
+            data-bind="options: guilds, optionsText: 'name', value: guild, event: { change: fetchTriggers }">
+            <option value="{}">Loading guilds&hellip;</option>
         </select>
     </div>
 
@@ -34,15 +36,20 @@
         <table id="data-table" class="table table-striped table-bordered">
             <thead>
                 <tr>
-                    <th class="sort-toggle no-select" data-bind="click: (data, event) => { toggleSort('trigger', event) }">
+                    <th class="w-25 sort-toggle no-select" data-bind="click: (data, event) => { toggleSort('trigger', event) }">
                         <span class="pull-left">Trigger</span> <i class="fa fa-sort-alpha-asc pull-right"></i>
                     </th>
-                    <th class="sort-toggle no-select" data-bind="click: (data, event) => { toggleSort('response', event) }">
+                    <th class="w-75 sort-toggle no-select" data-bind="click: (data, event) => { toggleSort('response', event) }">
                         <span class="pull-left">Response</span> <i class="fa pull-right"></i>
                     </th>
-                    <th class="text-center"><button type="button" class="btn btn-default" data-bind="click: addTrigger, enable: guild"><i class="fa fa-plus"></i></button></th>
+                    <th class="text-center" style="min-width: 130px;"><button type="button" class="btn btn-default" disabled data-bind="click: addTrigger, enable: guildId() && !fetchingTriggers()"><i class="fa fa-plus"></i></button></th>
                 </tr>
             </thead>
+            <tr class="text-center invis" data-bind="css: { invis: !fetchingTriggers() }">
+                <td colspan="3">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </td>
+            </tr>
             <tbody class="invis" data-bind="foreach: sortedTriggers, css: { invis: 1 == 2 }">
                 <tr data-bind="attr: { 'data-id': id }">
                     <input type="hidden" data-bind="value: id" name="id"/>
@@ -52,7 +59,7 @@
                     <td class="w-75">
                         <input type="text" class="form-control inline-edit text-truncate" data-bind="value: response" name="response"/>
                     </td>
-                    <td style="min-width: 130px;" class="flex-center">
+                    <td class="flex-center">
                         <button type="type" value="save" class="btn btn-success mr-3" title="Save" disabled
                             data-bind="click: $parent.updateTrigger"
                             data-loading-text='<i class="fa fa-cog fa-spin"></i>''><i class="fa fa-save"></i></button>
@@ -91,7 +98,9 @@
         {
             const self = this;
 
-            self.fetchGuilds = () =>
+            self.fetchingGuilds = ko.observable(true);
+            self.fetchGuilds = () => {
+                self.fetchingGuilds(true);
                 fetch('https://discord.com/api/users/@me/guilds',{
                     headers: {
                     'Authorization': 'Bearer <%- user.accessToken %>'
@@ -111,25 +120,34 @@
                         self.fetchTriggers();
                     }
                 })
-                .catch(console.log); // TODO: show better msg
+                .catch(console.log) // TODO: show better msg
+                .then(_ => self.fetchingGuilds(false));
+            }
                 
             self.guilds = ko.observableArray();
             self.fetchGuilds();
 
             self.guild = ko.observable();
+            self.guildId = ko.pureComputed(() => self.guild() && self.guild().id);
 
+            self.fetchingTriggers = ko.observable(false);
             self.fetchTriggers = () => {
                 self.triggers([]);
-                const guildId = self.guild() && self.guild().id;
+                const guildId = self.guildId();
                 if (!guildId) return;
 
-                triggerApi.getAll(self.guild().id)
+                console.log(guildId)
+
+                const fetchStart = Date.now();
+                self.fetchingTriggers(true);
+                triggerApi.getAll(self.guildId())
+                .then(async data => { await delay(MIN_LOADING - (Date.now() - fetchStart)); return data; })
                 .then(triggers => self.triggers(triggers))
-                .catch(console.log); // TODO: make better :)
+                .catch(console.log) // TODO: make better :)
+                .then(_ => self.fetchingTriggers(false));
             }
                 
             self.triggers = ko.observableArray();
-            self.fetchTriggers();
 
             self.sortColumn = ko.observable('trigger');
             self.sortAsc = ko.observable(true);
@@ -186,7 +204,7 @@
                     },
                     preConfirm: () => {
                         const data = {
-                            guildId: self.guild().id,
+                            guildId: self.guildId(),
                             trigger: document.getElementById('swal-form-trigger').value,
                             response: document.getElementById('swal-form-response').value
                         };
