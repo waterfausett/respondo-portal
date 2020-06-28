@@ -98,7 +98,7 @@
     (() => {
         $(() => ko.applyBindings(new ViewModel()));
 
-        const MIN_LOADING = 250;
+        const MIN_LOADING = 50;
 
         $('table#data-table').on('input', 'input', (event) => {
             const $targetRow = $(event.target).parents('tr[data-id]');
