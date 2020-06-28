@@ -19,7 +19,7 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
     const addObj = req.body;
     try {
-        const id = await triggerService.addResponse(addObj.guildId, addObj.trigger, addObj.response);
+        const id = await triggerService.addResponse(addObj.guildId, addObj.trigger.toLowerCase(), addObj.response);
         const newObj = Object.assign(addObj, {id});
         res.status(201).json(newObj);
     } catch (error) {
