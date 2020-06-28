@@ -230,12 +230,43 @@
                     .then(_ => self.triggers.valueHasMutated());
             }
 
-            self.deleteTrigger = (item) => {
+            self.deleteTrigger = (item, event) => {
                 const $btn = $(event.currentTarget);
-                const action = triggerApi.delete(item);
 
-                applyUXEffects(item, $btn, action)
-                    .then(_ => self.triggers.remove(x => x.id === item.id));
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Are you sure?',
+                    html:
+                        `<hr/>
+                        <div class="text-left">
+                            <label>Trigger:</label>
+                            <code>${item.trigger}</code>
+                        </div>
+                        <div class="text-left">
+                            <label>Response:</label>
+                            <code>${item.response}</code>
+                        </div>
+                        <hr/>
+                        <div class="bd-callout bd-callout-danger text-left">
+                            <h5>Deleting Triggers</h5>
+                            This action will permanantly wipe a <code>trigger</code>/<code>response</code> combination from <b>respondo</b>'s memory.
+                        </div>`,
+                    focusConfirm: false,
+                    confirmButtonText: '🔥 Burn it with fire!',
+                    confirmButtonColor: '#dc3545',
+                    showCancelButton: true,
+                    cancelButtonText: 'Wait&hellip;',
+                    showLoaderOnConfirm: true,
+                    customClass: {
+                        actions: 'justify-content-end'
+                    },
+                    preConfirm: () => {
+                        const action = triggerApi.delete(item);
+
+                        return applyUXEffects(item, $btn, Promise.resolve(action))
+                            .then(_ => self.triggers.remove(x => x.id === item.id));
+                    }
+                });
             }
         }
 
