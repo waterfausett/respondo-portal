@@ -47,6 +47,7 @@ router.put('/:id', async (req, res, next) => {
         return next();
     }
 
+    updateObj.trigger = updateObj.trigger.toLowerCase();
     await triggerService.update(id, updateObj)
     res.sendStatus(200);
 });
