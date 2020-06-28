@@ -122,7 +122,7 @@
                         self.fetchTriggers();
                     }
                 })
-                .catch(console.log) // TODO: show better msg
+                .catch(showError)
                 .then(_ => self.fetchingGuilds(false))
                 .then(_ => self.guildsCaption(null));
             }
@@ -145,7 +145,7 @@
                 triggerApi.getAll(self.guildId())
                 .then(data => delay(MIN_LOADING - (Date.now() - fetchStart)).then(_ => data))
                 .then(triggers => self.triggers(triggers))
-                .catch(console.log) // TODO: make better :)
+                .catch(showError)
                 .then(_ => self.fetchingTriggers(false));
             }
                 
@@ -267,19 +267,23 @@
                     $formInputs.prop('disabled', false);
                     $submitter.button('reset');
 
-                    Swal.fire({
-                        title: 'Oh No!',
-                        html: `<hr/> Erm&hellip;not sure what happened there <br/> but it didn\'t work :/ 
-                            <hr/> 
-                            <div class="error-messages">
-                                <div class="col-xs-12">
-                                    <p>${error.message}</p>
-                                </div>
-                            </div>`,
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
+                    showError(error);
                 });
+        }
+
+        function showError(error) {
+            Swal.fire({
+                title: 'Oh No!',
+                html: `<hr/> Erm&hellip;not sure what happened there <br/> but it didn\'t work :/ 
+                    <hr/> 
+                    <div class="error-messages">
+                        <div class="col-xs-12">
+                            <p>${error.message}</p>
+                        </div>
+                    </div>`,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         }
     })();
 </script>
