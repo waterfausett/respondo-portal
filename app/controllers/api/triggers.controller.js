@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const triggerService = require('../../services/trigger.service');
+const { runInThisContext } = require('vm');
 
 /* GET triggers */
 router.get('/', async (req, res, next) => {
@@ -9,7 +10,7 @@ router.get('/', async (req, res, next) => {
     if (!guildId) {
         res.statusMessage = 'Bad Request: Query parameter "guildId" is required.';
         res.statusMessage(400).end();
-        next();
+        return next();
     }
 
 	res.json(guildId ? await triggerService.getRows(guildId) : []);
@@ -34,6 +35,12 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
     const id = req.params.id;
     const updateObj = req.body;
+    if (!updateObj || !updateObj.trigger || !updateObj.response) {
+        res.statusMessage = 'Bad Request';
+        res.statusMessage(400).end();
+        return next();
+    }
+
     await triggerService.update(id, updateObj)
     res.sendStatus(200);
 });
