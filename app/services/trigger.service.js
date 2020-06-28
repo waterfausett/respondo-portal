@@ -31,39 +31,6 @@ module.exports = {
         }
     },
 
-    getTriggers: async (guildId) => {
-        try {
-            const result = await executeQuery(`SELECT trigger FROM "TriggerResponses" WHERE "guildId" = '${guildId}' ORDER BY trigger`);
-            const results = (result) 
-                ? result.rows.reduce((obj, v) => {
-                    obj[v.trigger] = (obj[v.trigger] || 0) + 1;
-                    return obj;
-                  }, {})
-                : {};
-            return results;
-        } catch (err) {
-            logger.error(`${TAG}::getTriggers:`, err);
-            throw err;
-        }
-    },
-
-    getResponses: async (guildId) => {
-        try {
-            const result = await executeQuery(`SELECT id, trigger, response FROM "TriggerResponses" WHERE "guildId" = '${guildId}' ORDER BY trigger`);
-            const results = (result) 
-                ? result.rows.reduce((obj, v) => {
-                    obj[v.trigger] = (obj[v.trigger] || []);
-                    obj[v.trigger].push(v.response);
-                    return obj;
-                }, {})
-                : {};
-            return results;
-        } catch (err) {
-            logger.error(`${TAG}::getResponses:`, err);
-            throw err;
-        }
-    },
-
     addResponse: async (guildId, trigger, response) => {
         let res = { isAllowed: true }; // TODO: have this guy just throw an error
 
@@ -82,24 +49,6 @@ module.exports = {
         }
 
         return res;
-    },
-
-    removeResponse: async (guildId, trigger, response) => {
-        try {
-            await executeQuery(`DELETE FROM "TriggerResponses" WHERE "guildId" = '${guildId}' AND trigger = '${sqlClean(trigger)}' AND response = '${sqlClean(response)}'`);
-        } catch (err) {
-            logger.error(`${TAG}::removeResponse:`, err);
-            throw err;
-        }
-    },
-
-    removeTrigger: async (guildId, trigger) => {
-        try {
-            await executeQuery(`DELETE FROM "TriggerResponses" WHERE "guildId" = '${guildId}' AND trigger = '${sqlClean(trigger)}'`);
-        } catch (err) {
-            logger.error(`${TAG}::removeTrigger:`, err);
-            throw err;
-        }
     },
 
     update: async (id, obj) => {
