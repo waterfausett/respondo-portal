@@ -19,6 +19,12 @@ router.get('/', async (req, res, next) => {
 /* POST a trigger */
 router.post('/', async (req, res, next) => {
     const addObj = req.body;
+    if (!addObj || !addObj.trigger || !addObj.response) {
+        res.statusMessage = 'Bad Request';
+        res.statusMessage(400).end();
+        return next();
+    }
+
     try {
         const id = await triggerService.addResponse(addObj.guildId, addObj.trigger.toLowerCase(), addObj.response);
         const newObj = Object.assign(addObj, {id});
