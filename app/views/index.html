@@ -27,7 +27,7 @@
             <label class="input-group-text" for="selGuild1">Selected Guild:</label>
         </div>
         <select class="form-control" id="selGuild"
-            data-bind="options: guilds, optionsText: 'name', value: guild, event: { change: fetchTriggers }">
+            data-bind="options: guilds, optionsText: 'name', value: guild, event: { change: fetchTriggers }, optionsCaption: guildsCaption()">
             <option value="{}">Loading guilds&hellip;</option>
         </select>
     </div>
@@ -101,6 +101,8 @@
             self.fetchingGuilds = ko.observable(true);
             self.fetchGuilds = () => {
                 self.fetchingGuilds(true);
+                self.guilds([]);
+                self.guildsCaption('Loading guilds...');
                 fetch('https://discord.com/api/users/@me/guilds',{
                     headers: {
                     'Authorization': 'Bearer <%- user.accessToken %>'
@@ -121,10 +123,12 @@
                     }
                 })
                 .catch(console.log) // TODO: show better msg
-                .then(_ => self.fetchingGuilds(false));
+                .then(_ => self.fetchingGuilds(false))
+                .then(_ => self.guildsCaption(null));
             }
                 
             self.guilds = ko.observableArray();
+            self.guildsCaption = ko.observable();
             self.fetchGuilds();
 
             self.guild = ko.observable();
@@ -136,12 +140,10 @@
                 const guildId = self.guildId();
                 if (!guildId) return;
 
-                console.log(guildId)
-
                 const fetchStart = Date.now();
                 self.fetchingTriggers(true);
                 triggerApi.getAll(self.guildId())
-                .then(async data => { await delay(MIN_LOADING - (Date.now() - fetchStart)); return data; })
+                .then(data => delay(MIN_LOADING - (Date.now() - fetchStart)).then(_ => data))
                 .then(triggers => self.triggers(triggers))
                 .catch(console.log) // TODO: make better :)
                 .then(_ => self.fetchingTriggers(false));
