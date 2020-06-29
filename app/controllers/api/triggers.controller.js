@@ -21,7 +21,7 @@ router.post('/', async (req, res, next) => {
     if (!addObj || !addObj.trigger || !addObj.response) {
         res.statusMessage = 'Bad Request';
         res.statusMessage(400).end();
-        return next();
+        return;
     }
 
     try {
@@ -42,13 +42,18 @@ router.put('/:id', async (req, res, next) => {
     const id = req.params.id;
     const updateObj = req.body;
     if (!updateObj || !updateObj.trigger || !updateObj.response) {
-        res.statusMessage = 'Bad Request';
-        res.statusMessage(400).end();
-        return next();
+        res.sendStatus(400);
+        return;
     }
 
     updateObj.trigger = updateObj.trigger.toLowerCase();
-    await triggerService.update(id, updateObj)
+    const updatedRows = await triggerService.update(id, updateObj)
+
+    if (updatedRows === 0) {
+        res.sendStatus(404);
+        return;
+    }
+
     res.sendStatus(200);
 });
 

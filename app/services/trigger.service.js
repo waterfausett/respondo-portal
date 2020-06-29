@@ -56,11 +56,12 @@ module.exports = {
 
     update: async (id, obj) => {
         try {
-            await executeQuery({
+            const results = await executeQuery({
                 name: 'triggers-update',
-                text: `UPDATE "TriggerResponses" SET trigger = $1, response = $2 WHERE id = $3`,
+                text: `UPDATE "TriggerResponses" SET trigger = $1, response = $2 WHERE id = $3 RETURNING id`,
                 values: [sqlClean(obj.trigger), sqlClean(obj.response), id]
             });
+            return results.rows.length;
         } catch (err) {
             logger.error(`${TAG}::updateTrigger:`, err);
             throw err;
