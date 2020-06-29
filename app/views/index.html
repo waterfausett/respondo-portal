@@ -65,7 +65,7 @@
                 <tr data-bind="attr: { 'data-id': id }">
                     <input type="hidden" data-bind="value: id" name="id"/>
                     <td class="w-25">
-                        <input type="text" class="form-control inline-edit text-truncate" data-bind="value: trigger" name="trigger"/>
+                        <input type="text" class="form-control inline-edit text-lowercase text-truncate" data-bind="value: trigger" name="trigger"/>
                     </td>
                     <td class="w-75">
                         <input type="text" class="form-control inline-edit text-truncate" data-bind="value: response" name="response"/>
@@ -196,8 +196,11 @@
                             <div class="form-group row">
                                 <label for="swal-form-trigger" class="col-sm-3 col-form-label">Trigger:</label>
                                 <div class="col-sm-9">
-                                    <input id="swal-form-trigger" type="text" class="form-control" placeholder="hello" aria-label="Trigger" required>
+                                    <input id="swal-form-trigger" type="text" class="form-control text-lowercase" placeholder="hello" aria-label="Trigger" required>
                                 </div>
+                            </div>
+                            <div class="bs-callout bs-callout-warning text-left">
+                                <code>Triggers</code> are not case sensitive, so we just store them in lowercase
                             </div>
                             <div class="form-group">
                                 <label for="swal-form-response">Response:</label>
