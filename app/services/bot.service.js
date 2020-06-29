@@ -3,7 +3,7 @@ const authConfig = optionalRequire('../../config/auth.config.json');
 // Required dependencies
 const Discord = require('discord.io');
 const NodeCache = require('node-cache');
-const botCache = new NodeCache({ stdTTL: process.env.bot_server_cache_timeout || 60 * 60 * 1000 }); // default cache ttl to 1 hour
+const botCache = new NodeCache({ stdTTL: process.env.bot_server_cache_timeout || 60 * 60 }); // default cache ttl to 1 hour
 
 module.exports = {
     getServers: async () => {
