@@ -5,7 +5,7 @@ const passport = require('passport');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const favicon = require('serve-favicon');
-const parallel = require('./app/middleware/parallel.middleware');
+const logger = require('./app/services/logging.service');
 
 global.fetch = require('node-fetch');
 
@@ -55,6 +55,6 @@ app.use((req, res, next) => {
 });
 
 app.listen(app.get('port'), function() {
-    console.log('Node app is running on port', app.get('port'));
+    logger.info(`Node app is running on port ${app.get('port')}`);
 });
   

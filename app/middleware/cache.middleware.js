@@ -39,7 +39,7 @@ module.exports = {
         return (req, res, next) => {
             const userId = req.user.id;
             if (!userId) {
-                logger.warn('Attempted to cache a route for a user with no user present: ', req.originalUrl || req.url);
+                logger.warn(`Attempted to cache a route for a user with no user present: ${req.originalUrl || req.url}`);
                 next();
                 return;
             }
