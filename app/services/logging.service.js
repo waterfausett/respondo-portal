@@ -10,6 +10,7 @@ const logger = winston.createLogger({
             format: format.combine(
                 isProduction ? format.uncolorize() : format.colorize(),
                 format.align(),
+                format.errors({ stack: true }),
                 format.simple(),
             )
         })
