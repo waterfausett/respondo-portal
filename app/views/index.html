@@ -94,6 +94,7 @@
 
 <script src="/javascript/trigger.api.js"></script>
 <script src="/javascript/discord.api.js"></script>
+<script src="/javascript/socket.io.slim.js"></script>
 <script>
     (() => {
         $(() => ko.applyBindings(new ViewModel()));
@@ -145,6 +146,7 @@
             self.fetchTriggers = () => {
                 self.triggers([]);
                 const guildId = self.guildId();
+                socket.emit('change guild', guildId);
                 if (!guildId) return;
 
                 const fetchStart = Date.now();
@@ -232,7 +234,7 @@
                         if (!data.response) { Swal.showValidationMessage('<code>response</code>&nbsp; cannot be empty!'); return false; }
 
                         return triggerApi.add(data)
-                            .then(newObj => delay(MIN_LOADING).then(_ => self.triggers.push(newObj)))
+                            .then(newObj => delay(MIN_LOADING).then(_ => self.triggers.push(newObj)).then(_ => socket.emit('trigger added', newObj)))
                             .then(_ => { Toast.fire({ icon: 'success', title: 'added' }) })
                             .catch(error => Swal.showValidationMessage(`Request failed: <br/>${error}`));
                     }
@@ -240,11 +242,13 @@
             };
 
             self.updateTrigger = (item, event) => {
+                const guildId = self.guildId();
                 const $btn = $(event.currentTarget);
                 const action = triggerApi.update(item);
 
                 applyUXEffects(item, $btn, action)
-                    .then(_ => self.triggers.valueHasMutated());
+                    .then(_ => self.triggers.valueHasMutated())
+                    .then(_ => socket.emit('trigger updated', {...item, guildId}));
             }
 
             self.deleteTrigger = (item, event) => {
@@ -277,10 +281,12 @@
                         actions: 'justify-content-end'
                     },
                     preConfirm: () => {
+                        const guildId = self.guildId();
                         const action = triggerApi.delete(item);
 
                         return applyUXEffects(item, $btn, action)
-                            .then(_ => self.triggers.remove(x => x.id === item.id));
+                            .then(_ => self.triggers.remove(x => x.id === item.id))
+                            .then(_ => socket.emit('trigger deleted', {...item, guildId}));
                     }
                 });
             }
@@ -299,6 +305,30 @@
                     showConfirmButton: true
                 });
             }
+
+            const socket = io();
+
+            self.connected = ko.observable('pending');
+
+            socket.on('connect', () => {
+                self.connected(true);
+                const guildId = self.guildId();
+                if (guildId)
+                    socket.emit('change guild', guildId);
+            });
+            socket.on('reconnecting', () => self.connected('pending'));
+            socket.on('connect_error', () => self.connected(false));
+            socket.on('reconnect_failed', () => self.connected(false));
+            socket.on('disconnect', () => self.connected(false));
+            socket.on("trigger added", (data) => self.triggers.push(data));
+            socket.on("trigger updated", (data) => {
+                self.triggers.remove(x => x.id === data.id);
+                self.triggers.push(data);
+            });
+            socket.on("trigger deleted", (data) => {
+                self.triggers.remove(x => x.id === data.id);
+                Toast.fire({ icon: 'error', position: 'bottom', title: 'trigger deleted' });
+            });
         }
 
         function applyUXEffects(item, $submitter, action) {

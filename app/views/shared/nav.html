@@ -21,6 +21,7 @@
                         <img src="<%- user.avatar_url %>" class="img img-fluid rounded-circle" width="35" alt="default discord icon"
                             onerror="this.src='https://cdn.discordapp.com/embed/avatars/1.png';">
                         <%- user.username %>
+                        <i class="fa fa-circle" data-bind="style: { color: connected() === 'pending' ? '#ffc107' : connected() ? 'yellowgreen' : 'indianred' }, attr: { title: connected() === 'pending' ? 'reconnecting' : connected() ? 'connected' : 'disconnected' }"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="/logout">Logout</a>

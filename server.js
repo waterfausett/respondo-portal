@@ -54,7 +54,35 @@ app.use((req, res, next) => {
     });
 });
 
-app.listen(app.get('port'), function() {
+const server = app.listen(app.get('port'), function() {
     logger.info(`Node app is running on port ${app.get('port')}`);
 });
-  
+
+const io = require("socket.io")(server);
+
+io.on('connection', (socket) => {
+    console.log('Connected');
+
+    socket.on("trigger added", (data) => {
+        socket.to(data.guildId).emit("trigger added", data);
+    });
+
+    socket.on("trigger updated", (data) => {
+        socket.to(data.guildId).emit("trigger updated", data);
+    });
+
+    socket.on("trigger deleted", (data) => {
+        socket.to(data.guildId).emit("trigger deleted", data);
+    });
+
+    socket.on('change guild', (guildId) => {
+        socket.leaveAll();
+
+        if (guildId)
+            socket.join(guildId);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+});
