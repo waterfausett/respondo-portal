@@ -34,11 +34,11 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/app/content'));
 app.use(favicon(__dirname + '/favicon.ico'));
 
-// Routes
-app.use(require('./app/controllers'));
-
 // Api routes
 app.use('/api/v1', require('./app/controllers/api'));
+
+// Routes
+app.use(require('./app/controllers'));
 
 // Error handling
 app.use(require('./config/error'));
