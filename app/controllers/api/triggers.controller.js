@@ -12,7 +12,9 @@ router.get('/', async (req, res, next) => {
         return next();
     }
 
-	res.json(guildId ? await triggerService.getRows(guildId) : []);
+    triggerService.getRows(guildId)
+        .then(rows => res.json(rows))
+        .catch(error => next(error));
 });
 
 /* POST a trigger */
@@ -33,7 +35,7 @@ router.post('/', async (req, res, next) => {
         if (error && error.constraint === 'UX_Trigger_Response_GuildId') {
             res.statusMessage = 'Trigger/Response combo already exists!';
             res.status(409).end();
-        } else throw error;
+        } else next(error);
     }
 });
 
