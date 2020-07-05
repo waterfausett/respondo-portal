@@ -325,10 +325,7 @@
                 self.triggers.remove(x => x.id === data.id);
                 self.triggers.push(data);
             });
-            socket.on("trigger deleted", (data) => {
-                self.triggers.remove(x => x.id === data.id);
-                Toast.fire({ icon: 'error', position: 'bottom', title: 'trigger deleted' });
-            });
+            socket.on("trigger deleted", (data) => self.triggers.remove(x => x.id === data.id));
         }
 
         function applyUXEffects(item, $submitter, action) {
