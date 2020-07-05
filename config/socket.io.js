@@ -1,11 +1,10 @@
+const logger = require('../app/services/logging.service');
 const socket = require("socket.io");
 
 module.exports = (server) => {
     const io = socket(server);
 
     io.on('connection', (socket) => {
-        console.log('Connected');
-    
         socket.on("trigger added", (data) => {
             socket.to(data.guildId).emit("trigger added", data);
         });
@@ -26,7 +25,6 @@ module.exports = (server) => {
         });
     
         socket.on('disconnect', () => {
-            console.log('user disconnected');
         });
     });
 };
