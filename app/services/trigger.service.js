@@ -40,7 +40,7 @@ module.exports = {
             const insertResult = await executeQuery({
                 name: 'triggers-add-response',
                 text: `INSERT INTO "TriggerResponses" (trigger, response, "guildId") VALUES ($1, $2, $3) RETURNING id`,
-                values: [sqlClean(trigger), sqlClean(response), guildId]
+                values: [trigger, response, guildId]
             });
             return insertResult.rows[0].id;
         } catch (err) {
@@ -59,7 +59,7 @@ module.exports = {
             const results = await executeQuery({
                 name: 'triggers-update',
                 text: `UPDATE "TriggerResponses" SET trigger = $1, response = $2 WHERE id = $3 RETURNING id`,
-                values: [sqlClean(obj.trigger), sqlClean(obj.response), id]
+                values: [obj.trigger, obj.response, id]
             });
             return results.rows.length;
         } catch (err) {
